@@ -1,24 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-{% if title %}
-    <title>Про Flask - {{title}}</title>
-{% else %}
-    <title>Про Flask</title>
-{% endif %}
-</head>
-<body>
-<ul>
-{% for m in menu %}
-<li>{{m}}</li>
-{% endfor %}
-</ul>
+{% extends 'base.html' %}
 
-{% if title %}
-    <h1>Про Flask - {{title}}</h1>
-{% else %}
-    <h1>Про Flask</h1>
-{% endif %}
-</body>
-</html>
+{% block content %}
+{{ super() }}
+<p>Содержимое главное страницы
+{% endblock %}
