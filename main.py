@@ -33,8 +33,13 @@ def pageNotFound(error):
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    if 'userLogger' in session:
+    if 'userLogged' in session:
         return redirect(url_for('profile', username=session['userLogger']))
+    elif request.method == 'POST' and request.form['userLogged'] == 'Apostol' and request.form['psw'] == '123':
+        return redirect(url_for('profile', username=session['userLogged']))
+
+    return render_template('login.html', title='Авторизация', menu=menu)
+
 
 
 
