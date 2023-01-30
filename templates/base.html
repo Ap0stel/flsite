@@ -2,23 +2,28 @@
 <html>
 <head>
     <meta charset="utf-8">
+    {% block title -%}
     {% if title %}
         <title>Про Flask - {{ title }}</title>
     {% else %}
         <title>Про Flask</title>
     {% endif %}
+    {% endblock %}
 </head>
 <body>
+{blockcontent -%}
+    {% - block mainmenu -%}
 <ul>
     {% for m in menu %}
     <li>{{m}}</li>
     {% endfor %}
 </ul>
-
+{% endblock mainmenu -%}
 {% if title %}
         <h1>{{ title }}</h1>
     {% else %}
         <h1>Про Flask</h1>
     {% endif %}
+{% endblock -%}
 </body>
 </html>
