@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, session, redirect
+from flask import Flask, render_template, url_for, request, session, redirect, abort
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sdfsdfgdsfgsdg345g'
@@ -35,13 +35,17 @@ def pageNotFound(error):
 def login():
     if 'userLogged' in session:
         return redirect(url_for('profile', username=session['userLogger']))
-    elif request.method == 'POST' and request.form['userLogged'] == 'Apostol' and request.form['psw'] == '123':
+    elif request.method == 'POST' and request.form['username'] == 'Apostol' and request.form['psw'] == '123':
+        session['userLogged'] = request.form['username']
         return redirect(url_for('profile', username=session['userLogged']))
 
     return render_template('login.html', title='Авторизация', menu=menu)
 
-
-
+@app.route('/profile/<username>')
+def profile(username):
+    if 'userLogged' not in session or session['userLogged'] != username:
+        abort(404)
+    return f'Профиль пользователя: {username}'
 
 if __name__ == "__main__":
     app.run(debug=True)
