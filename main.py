@@ -1,7 +1,11 @@
 from flask import Flask, render_template, url_for, request, session, redirect, abort
-
+import sqlite3
+import os
+DATABASE  = '/tmp/flsite.db'
+DEBUG = True
+SECRET_KEY = 'sdfsdfgdsfgsdg345g'
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'sdfsdfgdsfgsdg345g'
+app.config.from_object(__name__)
 
 menu = [{'name': 'Установка', 'url': 'install-flask'},
         {'name': 'Первое приложение', 'url': 'first-app'},
@@ -46,6 +50,9 @@ def profile(username):
     if 'userLogged' not in session or session['userLogged'] != username:
         abort(404)
     return f'Профиль пользователя: {username}'
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
