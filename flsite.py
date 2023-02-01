@@ -85,22 +85,22 @@ def profile(username):
     return f'Профиль пользователя: {username}'
 
 
-@app.route('/add_post', methods=['POST', 'GET'])
+@app.route("/add_post", methods=["POST", "GET"])
 def addPost():
     db = get_db()
     dbase = FDataBase(db)
-
-    if request.method == 'POST':
+    if request.method == "POST":
         if len(request.form['name']) > 4 and len(request.form['post']) > 10:
             res = dbase.addPost(request.form['name'], request.form['post'])
             if not res:
-                flash('Ошибка добавления статьи', category = 'error')
+                flash('Ошибка добавления статьи1', category = 'error')
             else:
                 flash('Статья добавлена успешно', category='success')
         else:
-            flash('Ошибка добавления статьи', category='error')
+            flash('Ошибка добавления статьи2', category='error')
 
-    return render_template('add_post.html', menu = dbase.getMenu(), title='Добавление статьи')
+    return render_template('add_post.html', menu = dbase.getMenu(), title="Добавление статьи")
+
 
 
 
