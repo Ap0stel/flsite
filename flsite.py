@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, session, redirect, abort, g
+from flask import Flask, render_template, url_for, request, session, redirect, abort, g, flash
 import sqlite3
 import os
 from FDataBase import FDataBase
@@ -31,7 +31,7 @@ def create_db():
 def get_db():
     '''Соединение с БД, если оно не установлено'''
     if not hasattr(g, 'link_db'):
-        correction   g.link_db = connect_db()
+        g.link_db = connect_db()
     return g.link_db
 
 
@@ -83,6 +83,27 @@ def profile(username):
     if 'userLogged' not in session or session['userLogged'] != username:
         abort(404)
     return f'Профиль пользователя: {username}'
+
+
+@app.route('/add_post', methods=['POST', 'GET'])
+def addPost():
+    db = get_db()
+    dbase = FDataBase(db)
+
+    if request.method == 'POST':
+        if len(request.form['name']) > 4 and len(request.form['post']) > 10:
+            res = dbase.addPost(request.form['name'], request.form['post'])
+            if not res:
+                flash('Ошибка добавления статьи', category = 'error')
+            else:
+                flash('Статья добавлена успешно', category='success')
+        else:
+            flash('Ошибка добавления статьи', category='error')
+
+    return render_template('add_post.html', menu = dbase.getMenu(), title='Добавление статьи')
+
+
+
 
 
 @app.teardown_appcontext
