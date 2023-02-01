@@ -31,13 +31,13 @@ def create_db():
 def get_db():
     '''Соединение с БД, если оно не установлено'''
     if not hasattr(g, 'link_db'):
-        g.link_db = connect_db()
+        correction   g.link_db = connect_db()
     return g.link_db
 
 
-menu = [{'name': 'Установка', 'url': 'install-flask'},
-        {'name': 'Первое приложение', 'url': 'first-app'},
-        {'name': 'Обратная связь', 'url': 'contact'}]
+menu = [{'title': 'Установка', 'url': 'install-flask'},
+        {'title': 'Первое приложение', 'url': 'first-app'},
+        {'title': 'Обратная связь', 'url': 'contact'}]
 
 
 @app.route("/")
@@ -45,6 +45,7 @@ def index():
     db = get_db()
     dbase = FDataBase(db)
     print(url_for('index'))
+    print(*dbase.getMenu())
     return render_template('index.html', title='Главная', menu=dbase.getMenu())
 
 
