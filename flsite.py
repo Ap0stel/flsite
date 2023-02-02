@@ -34,6 +34,12 @@ def get_db():
         g.link_db = connect_db()
     return g.link_db
 
+dbase = None
+@app.before_request
+def before_request():
+    global dbase
+    db = get_db()
+    dbase = FDataBase(db)
 
 menu = [{'title': 'Установка', 'url': 'install-flask'},
         {'title': 'Первое приложение', 'url': 'first-app'},
