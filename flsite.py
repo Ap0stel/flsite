@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, request, session, redirect, a
 import sqlite3
 import os
 from FDataBase import FDataBase
-
+from werkzeug.security import generate_password_hash, check_password_hash
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
 SECRET_KEY = 'sdfsdfgdsfgsdg345g'
@@ -41,15 +41,10 @@ def before_request():
     db = get_db()
     dbase = FDataBase(db)
 
-menu = [{'title': 'Установка', 'url': 'install-flask'},
-        {'title': 'Первое приложение', 'url': 'first-app'},
-        {'title': 'Обратная связь', 'url': 'contact'}]
 
 
 @app.route("/")
 def index():
-    db = get_db()
-    dbase = FDataBase(db)
     print(url_for('index'))
     print(*dbase.getMenu())
     return render_template('index.html', title='Главная', menu=dbase.getMenu())
@@ -58,19 +53,19 @@ def index():
 @app.route("/about")
 def about():
     print(url_for('about'))
-    return render_template('about.html', title='О сайте', menu=menu)
+    return render_template('about.html', title='О сайте', menu=dbase.getMenu())
 
 
 @app.route('/contact', methods=['POST', 'GET'])
 def pasha():
     if request.method == 'POST':
         print(request.form)
-    return render_template('contact.html', title='Обратная связь', menu=menu)
+    return render_template('contact.html', title='Обратная связь', menu=dbase.getMenu())
 
 
 @app.errorhandler(404)
 def pageNotFound(error):
-    return render_template('page404.html', title='Страница не найдена', menu=menu)
+    return render_template('page404.html', title='Страница не найдена', menu=dbase.getMenu())
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -81,7 +76,7 @@ def login():
         session['userLogged'] = request.form['username']
         return redirect(url_for('profile', username=session['userLogged']))
 
-    return render_template('login.html', title='Авторизация', menu=menu)
+    return render_template('login.html', title='Авторизация', menu=dbase.getMenu())
 
 
 @app.route('/profile/<username>')
@@ -93,8 +88,6 @@ def profile(username):
 
 @app.route("/add_post", methods=["POST", "GET"])
 def addPost():
-    db = get_db()
-    dbase = FDataBase(db)
     if request.method == "POST":
         if len(request.form['name']) > 4 and len(request.form['post']) > 10:
             res = dbase.addPost(request.form['name'], request.form['post'])
@@ -107,6 +100,22 @@ def addPost():
 
     return render_template('add_post.html', menu = dbase.getMenu(), title="Добавление статьи")
 
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    if request.method == 'POST':
+        if len(request.form['name']) > 4 and len(request.form['email']) > 4\
+            and len(request.form['psw']) > 4 and request.form['psw'] == request.form['psw2']:
+            hash = generate_password_hash(request.form['psw'])
+            res = dbase.addUser(request.form['name'], request.form['email'], hash)
+            if res:
+                flash('вы успешно зарегистрировались', 'success')
+                return redirect(url_for('login'))
+            else:
+                flash('Ошибка при добавлении в БД - 1', 'error')
+        else:
+            flash('Неверно заполнены поля', 'error')
+    return render_template('register.html', menu=dbase.getMenu(), title='Регистрация')
 
 
 
